@@ -86,6 +86,19 @@ public class Rndtrips
       {
         String cId = c.toStringID();
 
+        for ( OWLIndividual ind : c.getIndividuals(o) )
+        {
+          if ( !(ind instanceof OWLNamedIndividual) )
+            continue;
+
+          String iId = ind.asOWLNamedIndividual().getIRI().toString();
+
+          if ( iId.equals("") )
+            continue;
+
+          all_terms.add( iId );
+        }
+
         if ( cId.equals("") )
           continue;
 
@@ -160,9 +173,9 @@ public class Rndtrips
     {
       if ( args.length >= 1 )
       {
-        if ( args[0].toLowerCase().equals("help") )
+        if ( removeTrailingDashes( args[0].toLowerCase() ).equals("help") )
           return display_help();
-        if ( args[0].toLowerCase().equals("about") )
+        if ( removeTrailingDashes( args[0].toLowerCase() ).equals("about") )
           return display_about();
       }
 
@@ -171,13 +184,7 @@ public class Rndtrips
 
     for ( int i = 0; i < args.length - 3; i++ )
     {
-      String arg = args[i].toLowerCase().trim();
-
-      if ( arg.length() > 2 && arg.substring(0,2).equals("--") )
-        arg = arg.substring(2);
-      else
-      if ( arg.length() > 1 && arg.substring(0,1).equals("-") )
-        arg = arg.substring(1);
+      String arg = removeTrailingDashes( args[i].toLowerCase().trim() );
 
       if ( arg.equals("help") )
         return display_help();
@@ -312,5 +319,16 @@ public class Rndtrips
     {
       return -1;
     }
+  }
+
+  String removeTrailingDashes( String arg )
+  {
+    if ( arg.length() > 2 && arg.substring(0,2).equals("--") )
+      return arg.substring(2);
+
+    if ( arg.length() > 1 && arg.substring(0,1).equals("-") )
+      return arg.substring(1);
+
+    return arg;
   }
 }
